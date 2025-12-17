@@ -1,0 +1,31 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <div class="d-flex w-100">
+      <mat-card-title>Étudiants par Filière</mat-card-title>
+      <div class="m-l-auto">
+        <mat-form-field class="theme-select" appearance="outline">
+          <mat-select [(value)]="selectedYear" (selectionChange)="onYearChange()">
+            @for(year of academicYears; track year.viewValue ) {
+              <mat-option [value]="year.value">
+                {{ year.viewValue }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <apx-chart
+      [series]="salesOverviewChart.series"
+      [chart]="salesOverviewChart.chart"
+      [xaxis]="salesOverviewChart.xaxis"
+      [yaxis]="salesOverviewChart.yaxis"
+      [grid]="salesOverviewChart.grid"
+      [stroke]="salesOverviewChart.stroke"
+      [tooltip]="salesOverviewChart.tooltip"
+      [plotOptions]="salesOverviewChart.plotOptions"
+      [colors]="salesOverviewChart.colors"
+      [fill]="salesOverviewChart.fill"
+      [dataLabels]="salesOverviewChart.dataLabels">
+    </apx-chart>
+  </mat-card-content>
+</mat-card>

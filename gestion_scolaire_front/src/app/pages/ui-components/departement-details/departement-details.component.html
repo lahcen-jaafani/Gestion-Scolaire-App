@@ -1,0 +1,54 @@
+<mat-card class="departement-card mat-elevation-z4">
+  <div class="p-6 mb-10 rounded-xl bg-indigo-50 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div>
+      <h2 class="text-3xl font-bold text-indigo-700 flex items-center gap-2">
+        <mat-icon class="text-indigo-600">apartment</mat-icon>
+        filières des Départements
+      </h2>
+      <p class="text-gray-600 mt-1 text-sm md:text-base">Restez informé(e) des dernières nouvelles et activités de l’école.</p>
+    </div>
+  </div>
+
+    <div *ngIf="majors.length === 0" class="empty-message text-warn">
+        <mat-icon>info</mat-icon> Aucune filière trouvée pour ce département.
+    </div>
+
+    <mat-accordion multi class="major-accordion">
+        <mat-expansion-panel *ngFor="let major of majors">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon class="me-2" color="accent">school</mat-icon> {{ major.name }}
+                </mat-panel-title>
+
+            </mat-expansion-panel-header>
+
+            <div class="major-details p-3">
+                <p>
+                    <mat-icon class="me-1" color="primary">info</mat-icon>
+                    <strong>Description:</strong> {{ major.contenu }}
+                </p>
+
+                <p *ngIf="major.auteur">
+                    <mat-icon class="me-1" color="primary">person</mat-icon>
+                    <strong>Responsable:</strong>
+                    {{ major.auteur.firstName }} {{ major.auteur.lastName }}
+                </p>
+
+                <p>
+                    <mat-icon class="me-1" color="primary">event</mat-icon>
+                    <strong>Date de création:</strong>
+                    {{ major.dateCreation | date: 'medium' }}
+                </p>
+
+                <p *ngIf="major.pdfFilename">
+                    <mat-icon class="me-1" color="warn">picture_as_pdf</mat-icon>
+                    <strong>Document:</strong>
+                    <button mat-stroked-button color="primary" *ngIf="major.pdfPath" (click)="major.id && downloadPdf(major.id)">
+                        <mat-icon class="pdf-icon mr-1">picture_as_pdf</mat-icon>
+                        Télécharger le dépliant
+                    </button>
+                </p>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-card>

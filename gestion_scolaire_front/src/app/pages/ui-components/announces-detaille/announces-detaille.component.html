@@ -1,0 +1,53 @@
+<div class="anounce-list min-h-screen w-full bg-gradient-to-br from-gray-50 to-indigo-50 px-4 sm:px-8 lg:px-16 py-10">
+
+  <mat-card *ngIf="selectedItem"
+    class="anounce-card mat-elevation-z6 bg-white rounded-3xl overflow-hidden shadow-xl transition-all duration-300 border border-gray-200">
+
+    <!-- HEADER -->
+    <mat-card-header
+      class="px-6 py-6 bg-white border-b border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+
+      <div class="flex items-start gap-4">
+        <div class="p-3 rounded-xl bg-indigo-100 shadow-inner">
+          <mat-icon class="text-3xl text-indigo-600">campaign</mat-icon>
+        </div>
+
+        <div>
+          <mat-card-title class="text-2xl sm:text-3xl font-bold text-gray-800">
+            {{ selectedItem.titre }}
+          </mat-card-title>
+
+          <mat-card-subtitle class="flex items-center gap-2 mt-2 text-gray-500 text-sm">
+            <mat-icon class="text-base text-indigo-500">calendar_today</mat-icon>
+            {{ selectedItem.dateCreation | date:'longDate' }}
+          </mat-card-subtitle>
+        </div>
+      </div>
+    </mat-card-header>
+
+    <!-- IMAGE -->
+    <div *ngIf="selectedItem.imageUrl" class="w-full flex justify-center bg-gray-50 py-8">
+      <div class="rounded-2xl overflow-hidden shadow-lg w-full sm:w-3/4 md:w-1/2 lg:w-1/3 border border-gray-200">
+        <img [src]="backendUrl + selectedItem.imageUrl" alt="Illustration"
+          class="w-full h-56 object-cover object-center">
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <mat-card-content class="p-8">
+      <div class="flex items-start gap-4 text-gray-800 text-sm sm:text-base leading-relaxed">
+
+        <div class="p-3 bg-pink-100 rounded-full shadow-inner">
+          <mat-icon class="text-pink-600">description</mat-icon>
+        </div>
+
+        <p class="whitespace-pre-line text-gray-700 font-medium">
+          {{ selectedItem.contenu }}
+        </p>
+
+      </div>
+    </mat-card-content>
+
+  </mat-card>
+
+</div>

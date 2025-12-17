@@ -1,0 +1,50 @@
+<mat-card class="form-container">
+    <h2 class="form-title">
+        <mat-icon class="mr-2 align-middle">school</mat-icon>
+        Ajouter une Filière
+    </h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form-content">
+
+        <mat-form-field class="custom-form-field" appearance="outline">
+            <mat-label><mat-icon class="mr-1">title</mat-icon> Titre</mat-label>
+            <input matInput formControlName="name" placeholder="Ex: Génie Informatique" />
+        </mat-form-field>
+
+        <mat-form-field class="custom-form-field" appearance="outline">
+            <mat-label><mat-icon class="mr-1">description</mat-icon> Contenu</mat-label>
+            <textarea matInput formControlName="contenu" rows="5" placeholder="Décrivez la filière..."></textarea>
+        </mat-form-field>
+        <mat-form-field class="custom-form-field" appearance="outline">
+            <mat-label><mat-icon class="mr-1">domain</mat-icon> Département</mat-label>
+            <mat-select formControlName="departementId">
+                <mat-option *ngFor="let dept of departements" [value]="dept.id">
+                    {{ dept.departementName }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Chef de filiere</mat-label>
+            <mat-icon matPrefix color="primary">supervisor_account</mat-icon>
+            <mat-select formControlName="chefId">
+                <mat-option *ngFor="let prof of professors" [value]="prof.id">
+                    {{ prof.firstName }} {{ prof.lastName }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+
+        <div class="file-upload">
+            <label for="pdfFile" class="file-label">
+                <mat-icon>attach_file</mat-icon> Ajouter un PDF :
+            </label>
+            <input type="file" id="pdfFile" (change)="onFileChange($event)" accept="application/pdf"
+                class="file-input" />
+        </div>
+
+        <button mat-raised-button color="primary" class="submit-button" [disabled]="form.invalid">
+            <mat-icon class="mr-1">save</mat-icon> Enregistrer la Filière
+        </button>
+    </form>
+</mat-card>

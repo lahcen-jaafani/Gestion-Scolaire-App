@@ -1,0 +1,38 @@
+.departement-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    padding: 16px;
+}
+
+.departement-card {
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    img {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .departement-title {
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-top: 12px;
+        color: #1e88e5;
+    }
+
+    .text-warn {
+        color: red;
+    }
+}
+.departement-title-link {
+    color: #1976d2;
+    text-decoration: none; }

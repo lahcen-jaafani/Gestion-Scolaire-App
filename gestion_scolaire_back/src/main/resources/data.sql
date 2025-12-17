@@ -1,0 +1,2 @@
+-- Data initialization is now handled by DataInitializer class
+-- which properly encodes passwords using BCrypt

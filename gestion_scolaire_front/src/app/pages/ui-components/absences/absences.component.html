@@ -1,0 +1,169 @@
+<mat-card class="mat-elevation-z8" style="margin: 24px; border-radius: 16px; overflow: hidden;">
+  <!-- Header -->
+  <div class="header-gradient p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div>
+      <h2 class="text-3xl font-bold text-white flex items-center gap-3">
+        <mat-icon class="text-white">event_busy</mat-icon>
+        Gestion des Absences
+      </h2>
+      <p style="color:#5D87FF" class="text-indigo-100 mt-2 text-sm md:text-base">Suivi et enregistrement des absences des étudiants</p>
+    </div>
+    <div class="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+      <mat-icon class="text-white">info</mat-icon>
+      <span class="text-white text-sm ml-2">{{etudiants.length}} étudiants trouvés</span>
+    </div>
+  </div>
+
+  <!-- Filtres Principaux -->
+  <div class="filters-section p-6 border-b border-gray-100">
+    <h3 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
+      <mat-icon class="text-indigo-500 mr-2">filter_alt</mat-icon>
+      Filtres de recherche
+    </h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Filière -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Filière</mat-label>
+        <mat-icon matPrefix class="text-gray-400 mr-2">school</mat-icon>
+        <mat-select [(ngModel)]="selectedMajorId" (selectionChange)="onMajorChange()">
+          <mat-option *ngFor="let major of majors" [value]="major.id">{{ major.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Niveau -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Niveau</mat-label>
+        <mat-icon matPrefix class="text-gray-400 mr-2">grade</mat-icon>
+        <mat-select [(ngModel)]="selectedNiveau">
+          <mat-option *ngFor="let niveau of niveaux" [value]="niveau">{{ niveau }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Année Universitaire -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Année Universitaire</mat-label>
+        <mat-icon matPrefix class="text-gray-400 mr-2">calendar_today</mat-icon>
+        <mat-select [(ngModel)]="selectedYear" (selectionChange)="onSemesterOrYearChange()">
+          <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Semestre</mat-label>
+        <mat-select [(ngModel)]="selectedSemester" (selectionChange)="onSemesterOrYearChange()">
+          <mat-option *ngFor="let sem of semesters" [value]="sem">{{ sem }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="flex justify-end mt-4">
+      <button mat-raised-button color="primary" (click)="filterStudents()" class="flex items-center">
+        <mat-icon>search</mat-icon>
+        <span>Appliquer les filtres</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Séance d'absence -->
+  <div class="session-section p-6 border-b border-gray-100">
+    <h3 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
+      <mat-icon class="text-indigo-500 mr-2">event</mat-icon>
+      Séance d'absence
+    </h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Module -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Module</mat-label>
+        <mat-icon matPrefix class="text-gray-400 mr-2">book</mat-icon>
+        <mat-select [(ngModel)]="selectedModuleId">
+          <mat-option *ngFor="let module of filteredModules" [value]="module.id">
+            {{ module.nom }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Créneau Horaire -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Créneau Horaire</mat-label>
+        <mat-icon matPrefix class="text-gray-400 mr-2">schedule</mat-icon>
+        <mat-select [(ngModel)]="selectedTimeSlot">
+          <mat-option value="De 08h à 10h">08:00 - 10:00</mat-option>
+          <mat-option value="De 10h à 12h">10:00 - 12:00</mat-option>
+          <mat-option value="De 14h à 16h">14:00 - 16:00</mat-option>
+          <mat-option value="De 16h à 18h">16:00 - 18:00</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Date -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Date</mat-label>
+        <mat-icon matPrefix class="text-gray-400 mr-2">calendar_today</mat-icon>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Liste des étudiants -->
+  <div *ngIf="etudiants.length > 0" class="p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-medium text-gray-700 flex items-center">
+        <mat-icon class="text-indigo-500 mr-2">group</mat-icon>
+        Liste des Étudiants
+      </h3>
+
+    </div>
+
+    <div class="overflow-x-auto">
+      <table mat-table [dataSource]="etudiants" class="w-full mat-elevation-z1 rounded-lg overflow-hidden">
+        <!-- CNE -->
+        <ng-container matColumnDef="cne">
+          <th mat-header-cell *matHeaderCellDef class="font-medium bg-indigo-50">CNE</th>
+          <td mat-cell *matCellDef="let e" class="font-mono">{{ e.cne }}</td>
+        </ng-container>
+
+        <!-- Nom -->
+        <ng-container matColumnDef="nom">
+          <th mat-header-cell *matHeaderCellDef class="font-medium bg-indigo-50">Nom</th>
+          <td mat-cell *matCellDef="let e" class="font-medium">{{ e.lastName }}</td>
+        </ng-container>
+
+        <!-- Prénom -->
+        <ng-container matColumnDef="prenom">
+          <th mat-header-cell *matHeaderCellDef class="font-medium bg-indigo-50">Prénom</th>
+          <td mat-cell *matCellDef="let e">{{ e.firstName }}</td>
+        </ng-container>
+
+        <!-- Absent -->
+        <ng-container matColumnDef="absent">
+          <th mat-header-cell *matHeaderCellDef class="font-medium bg-indigo-50">Statut</th>
+          <td mat-cell *matCellDef="let e">
+            <mat-checkbox [(ngModel)]="absentMap[e.id]" color="warn" class="transform scale-110">
+              Absent
+            </mat-checkbox>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="h-12"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            class="h-14 hover:bg-gray-50 even:bg-gray-50/50"></tr>
+      </table>
+    </div>
+
+    <div class="flex justify-end mt-6">
+      <button mat-raised-button color="primary" (click)="saveAbsences()" class="px-6 py-2">
+        <mat-icon class="mr-2">save</mat-icon>
+        Enregistrer les absences
+      </button>
+    </div>
+  </div>
+
+  <!-- Aucun résultat -->
+  <div *ngIf="etudiants.length === 0" class="p-8 text-center">
+    <mat-icon class="text-gray-300 text-6xl mb-4">group_off</mat-icon>
+    <h4 class="text-xl font-medium text-gray-500 mb-2">Aucun étudiant trouvé</h4>
+    <p class="text-gray-400">Veuillez appliquer des filtres pour afficher la liste des étudiants</p>
+  </div>
+</mat-card>

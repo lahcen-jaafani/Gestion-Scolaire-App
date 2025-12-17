@@ -1,0 +1,119 @@
+.title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: #3f51b5;
+}
+
+.major-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.major-card {
+    padding: 16px;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+    }
+
+    .card-content {
+        font-size: 14px;
+        color: #555;
+        margin-top: 8px;
+    }
+
+    .actions-menu {
+        display: flex;
+        align-items: center;
+    }
+
+    .mat-icon-button {
+        padding: 4px;
+    }
+}
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.header-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+
+    button {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+}
+
+.major-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.major-card {
+    padding: 16px;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+    }
+
+    .card-content {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #444;
+    }
+}
+
+.empty-message {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    margin-top: 20px;
+}

@@ -1,0 +1,47 @@
+<h2 class="title">
+    <mat-icon color="primary" style="vertical-align: middle;">school</mat-icon>
+    Gestion des Filières
+</h2>
+
+<div class="header-actions">
+    <button mat-raised-button color="primary" [routerLink]="['/ui-components/add-major']">
+        <mat-icon>add</mat-icon>
+        Ajouter une Filière
+    </button>
+</div>
+
+<div *ngIf="items.length === 0" class="empty-message">
+    <p>Aucune filière trouvée.</p>
+</div>
+
+<div class="major-list">
+    <mat-card *ngFor="let item of items" class="major-card mat-elevation-z4">
+        <div class="card-header">
+            <div class="card-title">
+                <mat-icon color="accent">folder</mat-icon>
+                <span>{{ item.name }}</span>
+            </div>
+
+            <div class="actions-menu">
+                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Options">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="editItem(item.id!)">
+                        <mat-icon>edit</mat-icon>
+                        <span>Modifier</span>
+                    </button>
+                    <button mat-menu-item (click)="deleteItem(item.id!)">
+                        <mat-icon color="warn">delete</mat-icon>
+                        <span>Supprimer</span>
+                    </button>
+                </mat-menu>
+            </div>
+        </div>
+
+        <div class="card-content">
+            <p class="description">{{ item.contenu || 'Pas de description.' }}</p>
+        </div>
+    </mat-card>
+</div>
+  

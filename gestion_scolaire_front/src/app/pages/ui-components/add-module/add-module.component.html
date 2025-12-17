@@ -1,0 +1,61 @@
+<mat-card class="module-form-card mat-elevation-z6">
+    <mat-card-title>Ajouter un module</mat-card-title>
+
+    <form [formGroup]="moduleForm" (ngSubmit)="submit()" class="module-form">
+
+        <!-- Nom du module -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nom du module</mat-label>
+            <input matInput formControlName="nom" required />
+        </mat-form-field>
+
+        <!-- Professeur -->
+        <mat-form-field appearance="outline">
+            <mat-label>Professeur</mat-label>
+            <mat-select formControlName="professeurId">
+              <mat-option *ngFor="let prof of professors" [value]="prof.id">
+                {{ prof.firstName }} {{ prof.lastName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        <!-- Filière -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Filière</mat-label>
+            <mat-select formControlName="majorId" required>
+                <mat-option *ngFor="let major of majors" [value]="major.id">
+                    {{ major.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Année universitaire</mat-label>
+            <mat-select formControlName="anneeUniversitaire">
+                <mat-option *ngFor="let annee of anneesUniversitaires" [value]="annee">
+                    {{ annee }}
+                </mat-option>
+            </mat-select>
+            </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Semestre</mat-label>
+            <mat-select formControlName="semester" required>
+                <mat-option value="Semestre 1">Semestre 1</mat-option>
+                <mat-option value="Semestre 2">Semestre 2</mat-option>
+                <mat-option value="Semestre 3">Semestre 3</mat-option>
+                <mat-option value="Semestre 4">Semestre 4</mat-option>
+                <mat-option value="Semestre 5">Semestre 5</mat-option>
+                <mat-option value="Semestre 6">Semestre 6</mat-option>
+            </mat-select>
+            </mat-form-field>
+
+        <!-- Bouton -->
+        <div class="submit-button">
+            <button mat-flat-button color="primary" type="submit" [disabled]="moduleForm.invalid">
+                <mat-icon>add</mat-icon> Ajouter Module
+            </button>
+        </div>
+    </form>
+</mat-card>
+  

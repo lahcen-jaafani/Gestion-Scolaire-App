@@ -1,0 +1,28 @@
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.mat-mdc-card {
+  overflow: hidden;
+}
+
+.mat-mdc-raised-button {
+  transition: all 0.3s ease;
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.mat-mdc-icon-button {
+  transition: all 0.2s ease;
+  &:hover {
+    transform: scale(1.1);
+  }
+}

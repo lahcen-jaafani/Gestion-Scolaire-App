@@ -1,0 +1,218 @@
+<!-- MAIN CONTAINER -->
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50">
+
+  <!-- HEADER SECTION -->
+  <div class="header-banner p-8 mb-8 text-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="p-3 bg-white bg-opacity-20 rounded-full shadow-glow">
+              <span class="material-icons text-white">public</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold">Actualités & Événements</h1>
+          </div>
+          <p class="text-indigo-100 text-lg max-w-2xl">
+            Découvrez les dernières annonces, informations importantes et les activités à venir.
+          </p>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-4">
+          <div class="p-4 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm shadow-glow">
+            <span class="material-icons text-white text-4xl">newspaper</span>
+          </div>
+          <div class="p-4 bg-white bg-opacity-20 rounded-xl backdrop-blur-sm shadow-glow">
+            <span class="material-icons text-white text-4xl">event_available</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+
+    <!-- FILTER TABS -->
+    <div class="flex justify-center mb-8">
+      <div class="inline-flex bg-white rounded-full shadow-md p-1">
+        <button class="px-6 py-2 rounded-full bg-indigo-600 text-white font-medium flex items-center gap-1">
+          <span class="material-icons text-sm">rocket_launch</span>
+          Tous
+        </button>
+
+        <button class="px-6 py-2 rounded-full text-gray-700 hover:bg-gray-100 transition flex items-center gap-1">
+          <span class="material-icons text-sm">feed</span>
+          Actualités
+        </button>
+
+        <button class="px-6 py-2 rounded-full text-gray-700 hover:bg-gray-100 transition flex items-center gap-1">
+          <span class="material-icons text-sm">event_note</span>
+          Événements
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+      <!-- NEWS SECTION -->
+      <div>
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-indigo-700 flex items-center gap-2">
+            <span class="material-icons text-indigo-600">feed</span>
+            Actualités
+          </h2>
+          <span class="badge bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full shadow">
+            {{ actualites.length }} articles
+          </span>
+        </div>
+
+        <div class="space-y-6">
+          <div *ngFor="let item of actualites" class="card news-card hover:shadow-xl transition">
+
+            <div class="flex flex-col md:flex-row">
+
+              <!-- Image -->
+              <div class="md:w-2/5 overflow-hidden bg-gray-100 relative" *ngIf="item.imageUrl">
+                <div
+                  class="absolute top-0 left-0 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-br-xl flex items-center gap-1">
+                  <span class="material-icons text-xs">feed</span>
+                  ACTUALITÉ
+                </div>
+                <img [src]="backendUrl + item.imageUrl" alt="image" class="card-image">
+              </div>
+
+              <!-- TEXT -->
+              <div class="flex-1 p-5 flex flex-col justify-between">
+
+                <div>
+                  <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-xl font-semibold text-gray-900 line-clamp-2">
+                      <a [routerLink]="['/ui-components/announces-detaille', item.id]"
+                        class="hover:text-indigo-600 transition-colors flex items-center gap-1">
+                        <span class="material-icons text-base">article</span>
+                        {{ item.titre }}
+                      </a>
+                    </h3>
+
+                    <!-- ADMIN MENU -->
+                    <div *ngIf="authService.getUserRole() === 'ADMINISTRATOR'">
+                      <button mat-icon-button [matMenuTriggerFor]="menu"
+                        class="text-gray-400 hover:text-indigo-600 transition-colors">
+                        <span class="material-icons">more_vert</span>
+                      </button>
+                      <mat-menu #menu="matMenu">
+                        <button mat-menu-item><span class="material-icons">edit</span>Modifier</button>
+                        <button mat-menu-item><span class="material-icons">delete</span>Supprimer</button>
+                      </mat-menu>
+                    </div>
+                  </div>
+
+                  <p class="text-gray-600 text-sm line-clamp-3 mb-4">{{ item.contenu }}</p>
+                </div>
+
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center text-xs text-gray-500">
+                    <span class="material-icons text-sm mr-1 text-indigo-500">calendar_month</span>
+                    {{ item.dateCreation | date:'longDate' }}
+                  </div>
+
+                  <a [routerLink]="['/ui-components/announces-detaille', item.id]"
+                    class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 transition">
+                    Lire la suite
+                    <span class="material-icons text-sm">arrow_forward</span>
+                  </a>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- EVENTS SECTION -->
+      <div>
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-pink-600 flex items-center gap-2">
+            <span class="material-icons text-pink-600">event</span>
+            Événements
+          </h2>
+          <span class="badge bg-pink-100 text-pink-700 px-3 py-1 rounded-full shadow">
+            {{ evenements.length }} événements
+          </span>
+        </div>
+
+        <div class="space-y-6">
+          <div *ngFor="let item of evenements" class="card event-card hover:shadow-xl transition">
+
+            <div class="flex flex-col md:flex-row">
+
+              <div class="md:w-2/5 overflow-hidden bg-gray-100 relative" *ngIf="item.imageUrl">
+                <div
+                  class="absolute top-0 left-0 bg-pink-600 text-white text-xs font-bold px-3 py-1 rounded-br-xl flex items-center gap-1">
+                  <span class="material-icons text-xs">event</span>
+                  ÉVÉNEMENT
+                </div>
+                <img [src]="backendUrl + item.imageUrl" alt="image" class="card-image">
+              </div>
+
+              <div class="flex-1 p-5 flex flex-col justify-between">
+
+                <div>
+                  <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-xl font-semibold text-gray-900 line-clamp-2">
+                      <a [routerLink]="['/ui-components/announces-detaille', item.id]"
+                        class="hover:text-pink-600 transition-colors flex items-center gap-1">
+                        <span class="material-icons text-base">celebration</span>
+                        {{ item.titre }}
+                      </a>
+                    </h3>
+
+                    <div *ngIf="authService.getUserRole() === 'ADMINISTRATOR'">
+                      <button mat-icon-button [matMenuTriggerFor]="menuEvents"
+                        class="text-gray-400 hover:text-pink-600 transition-colors">
+                        <span class="material-icons">more_vert</span>
+                      </button>
+                      <mat-menu #menuEvents="matMenu">
+                        <button mat-menu-item><span class="material-icons">edit</span>Modifier</button>
+                        <button mat-menu-item><span class="material-icons">delete</span>Supprimer</button>
+                      </mat-menu>
+                    </div>
+                  </div>
+
+                  <p class="text-gray-600 text-sm line-clamp-3 mb-4">
+                    {{ item.contenu }}
+                  </p>
+                </div>
+
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center text-xs text-gray-500">
+                    <span class="material-icons text-sm mr-1 text-pink-500">event_available</span>
+                    {{ item.dateCreation | date:'longDate' }}
+                  </div>
+
+                  <a [routerLink]="['/ui-components/announces-detaille', item.id]"
+                    class="text-pink-600 hover:text-pink-800 text-sm font-medium flex items-center gap-1 transition">
+                    Voir détails
+                    <span class="material-icons text-sm">arrow_forward</span>
+                  </a>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

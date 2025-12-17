@@ -1,0 +1,28 @@
+.full-width {
+    width: 100%;
+}
+
+.full-width-table {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+/* Animation d'apparition */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Couleurs des modules */
+.module-color-1 { background-color: #6366F1; } /* indigo */
+.module-color-2 { background-color: #10B981; } /* emerald */
+.module-color-3 { background-color: #F59E0B; } /* amber */
+.module-color-4 { background-color: #EC4899; } /* pink */
+.module-color-5 { background-color: #8B5CF6; } /* violet */

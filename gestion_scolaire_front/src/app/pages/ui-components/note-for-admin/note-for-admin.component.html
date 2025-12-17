@@ -1,0 +1,219 @@
+<div class="w-full px-4 py-8">
+  <!-- Card Header with improved styling -->
+  <mat-card class="p-6 mb-6 shadow-md bg-white rounded-lg border border-gray-100">
+    <mat-card-header class="mb-6">
+      <mat-card-title class="text-2xl font-bold text-indigo-700 flex items-center gap-2">
+        <mat-icon class="text-indigo-600">school</mat-icon>
+        Voir les notes filtrées par filière, par module et par année universitaire.
+      </mat-card-title>
+    </mat-card-header>
+
+    <!-- Filter Section with improved layout and icons -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <!-- Academic Year -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label class="text-gray-600">Année Universitaire</mat-label>
+        <mat-select [(ngModel)]="selectedYear" (selectionChange)="onSemesterOrYearChange()">
+          <mat-option *ngFor="let year of years" [value]="year">
+            {{ year }}
+          </mat-option>
+        </mat-select>
+        <mat-icon matSuffix class="text-gray-400">calendar_today</mat-icon>
+      </mat-form-field>
+
+      <!-- Major -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label class="text-gray-600">Filière</mat-label>
+        <mat-select [(ngModel)]="selectedMajorId" (selectionChange)="onMajorChange()">
+          <mat-option *ngFor="let major of majors" [value]="major.id">
+            {{ major.name }}
+          </mat-option>
+        </mat-select>
+        <mat-icon matSuffix class="text-gray-400">account_balance</mat-icon>
+      </mat-form-field>
+
+      <!-- Semester -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label class="text-gray-600">Semestre</mat-label>
+        <mat-select [(ngModel)]="selectedSemester" (selectionChange)="onSemesterOrYearChange()">
+          <mat-option *ngFor="let sem of semesters" [value]="sem">
+            {{ sem }}
+          </mat-option>
+        </mat-select>
+        <mat-icon matSuffix class="text-gray-400">date_range</mat-icon>
+      </mat-form-field>
+
+      <!-- Module -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label class="text-gray-600">Module</mat-label>
+        <mat-select [(ngModel)]="selectedModuleId">
+          <mat-option *ngFor="let module of modules" [value]="module.id">
+            {{ module.nom }}
+          </mat-option>
+        </mat-select>
+        <mat-icon matSuffix class="text-gray-400">menu_book</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+      <!-- Session Type -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label class="text-gray-600">Type de Session</mat-label>
+        <mat-select [(ngModel)]="selectedSessionType">
+          <mat-option *ngFor="let session of sessionTypes" [value]="session">
+            {{ session }}
+          </mat-option>
+        </mat-select>
+        <mat-icon matSuffix class="text-gray-400">assignment</mat-icon>
+      </mat-form-field>
+
+      <!-- Filter Button with improved styling -->
+      <div class="flex items-end">
+        <button mat-flat-button color="primary" class="m-r-8"
+                (click)="fetchStudentsWithNotes()"
+                [disabled]="isLoading">
+          <mat-icon>search</mat-icon>
+          <span *ngIf="!isLoading" class="font-medium">Afficher les Notes</span>
+          <span *ngIf="isLoading">Chargement...</span>
+        </button>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Loading State with better visual -->
+  <div *ngIf="isLoading" class="text-center py-12">
+    <mat-spinner diameter="60" color="primary" class="mx-auto"></mat-spinner>
+    <p class="mt-4 text-gray-600 font-medium">Chargement des données en cours...</p>
+  </div>
+
+  <!-- Students Table with enhanced design -->
+  <div *ngIf="students.length > 0 && !isLoading" class="overflow-x-auto shadow-lg rounded-lg">
+    <mat-card class="border border-gray-200">
+      <mat-card-header class="bg-indigo-50 p-4 border-b border-gray-200">
+        <mat-card-title class="text-xl font-semibold text-indigo-800 flex items-center gap-2">
+          <mat-icon>list_alt</mat-icon>
+          Notes des Étudiants
+        </mat-card-title>
+        <mat-card-subtitle class="text-gray-600 mt-1">
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-indigo-500 text-sm">info</mat-icon>
+            <span>Session: {{ selectedSessionType }} | Étudiants: {{ students.length }}</span>
+          </div>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <table mat-table [dataSource]="students" class="w-full">
+        <!-- Last Name -->
+        <ng-container matColumnDef="lastName">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50 px-4 py-3">Nom</th>
+          <td mat-cell *matCellDef="let student" class="px-4 py-3 border-b border-gray-100 text-gray-800">
+            {{ student.lastName }}
+          </td>
+        </ng-container>
+
+        <!-- First Name -->
+        <ng-container matColumnDef="firstName">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50 px-4 py-3">Prénom</th>
+          <td mat-cell *matCellDef="let student" class="px-4 py-3 border-b border-gray-100 text-gray-800">
+            {{ student.firstName }}
+          </td>
+        </ng-container>
+
+        <!-- CNE -->
+        <ng-container matColumnDef="cne">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50 px-4 py-3">CNE</th>
+          <td mat-cell *matCellDef="let student" class="px-4 py-3 border-b border-gray-100 text-gray-800">
+            <div class="flex items-center gap-1">
+              <mat-icon class="text-gray-400 text-sm">badge</mat-icon>
+              {{ student.cne }}
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- CC1 -->
+        <ng-container matColumnDef="cc1">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50 px-4 py-3 text-center">CC1</th>
+          <td mat-cell *matCellDef="let student" class="px-4 py-3 border-b border-gray-100 text-center">
+            <span class="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-800 font-medium">
+              {{ getNoteForStudent(student)?.cc1 || '---' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- CC2 -->
+        <ng-container matColumnDef="cc2">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50 px-4 py-3 text-center">CC2</th>
+          <td mat-cell *matCellDef="let student" class="px-4 py-3 border-b border-gray-100 text-center">
+            <span class="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-800 font-medium">
+              {{ getNoteForStudent(student)?.cc2 || '---' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- NR -->
+        <ng-container matColumnDef="nr">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50 px-4 py-3 text-center">NR</th>
+          <td mat-cell *matCellDef="let student" class="px-4 py-3 border-b border-gray-100 text-center">
+            <span class="inline-block px-3 py-1 rounded-full bg-purple-50 text-purple-800 font-medium">
+              {{ getNoteForStudent(student)?.nr || '---' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Moyenne -->
+        <ng-container matColumnDef="moyenne">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50 px-4 py-3 text-center">Moyenne</th>
+          <td mat-cell *matCellDef="let student" class="px-4 py-3 border-b border-gray-100 text-center">
+            <span class="inline-block px-3 py-1 rounded-full font-medium"
+                  [ngClass]="{
+                    'bg-green-100 text-green-800': (getNoteForStudent(student)?.moyenne || 0) >= 10,
+                    'bg-red-100 text-red-800': (getNoteForStudent(student)?.moyenne || 0) < 10
+                  }">
+              {{ getNoteForStudent(student)?.moyenne || '---' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Observation -->
+        <ng-container matColumnDef="observation">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50 px-4 py-3">Observation</th>
+          <td mat-cell *matCellDef="let student" class="px-4 py-3 border-b border-gray-100">
+            <div *ngIf="getNoteForStudent(student) as note" class="flex items-center gap-2">
+              <mat-icon *ngIf="note.observation?.includes('Validé')" class="text-green-500">check_circle</mat-icon>
+              <mat-icon *ngIf="note.observation?.includes('Rattrapage')" class="text-yellow-500">warning</mat-icon>
+              <mat-icon *ngIf="note.observation?.includes('Non validé')" class="text-red-500">error</mat-icon>
+              <span class="px-3 py-1 rounded-full text-sm font-medium"
+                    [ngClass]="{
+                      'bg-green-100 text-green-800': note.observation?.includes('Validé'),
+                      'bg-yellow-100 text-yellow-800': note.observation?.includes('Rattrapage'),
+                      'bg-red-100 text-red-800': note.observation?.includes('Non validé')
+                    }">
+                {{ note.observation || '-' }}
+              </span>
+            </div>
+            <div *ngIf="!getNoteForStudent(student)" class="text-gray-400">-</div>
+          </td>
+        </ng-container>
+
+
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="h-12"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            class="h-14 hover:bg-gray-50 transition-colors"></tr>
+      </table>
+    </mat-card>
+  </div>
+
+  <!-- Empty State with better design -->
+  <div *ngIf="students.length === 0 && !isLoading && selectedMajorId" class="text-center py-12">
+    <mat-card class="max-w-md mx-auto bg-indigo-50 border border-indigo-100 shadow-sm">
+      <mat-card-content class="p-6">
+        <div class="flex flex-col items-center">
+          <mat-icon class="text-5xl mb-4 text-indigo-400">info</mat-icon>
+          <h3 class="text-xl font-medium text-indigo-800 mb-2">Aucune donnée disponible</h3>
+          <p class="text-gray-600">Aucun étudiant trouvé pour les critères sélectionnés</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,167 @@
+<div class="w-full px-4 py-8">
+  <mat-card class="p-6 mb-6">
+    <mat-card-header class="mb-4">
+      <mat-card-title class="text-xl font-bold">Gestion des Notes</mat-card-title>
+      <mat-card-subtitle *ngIf="isAuthenticated">Connecté en tant que {{ userFullName }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <!-- Année universitaire -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Année universitaire</mat-label>
+        <mat-select [(ngModel)]="selectedYear" (selectionChange)="onSemesterOrYearChange()">
+          <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Filière -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Filière</mat-label>
+        <mat-icon matPrefix class="text-gray-400 mr-2">school</mat-icon>
+        <mat-select [(ngModel)]="selectedMajorId" (selectionChange)="onMajorChange()">
+          <mat-option *ngFor="let major of majors" [value]="major.id">{{ major.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Niveau -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Niveau</mat-label>
+        <mat-select [(ngModel)]="selectedNiveau">
+          <mat-option *ngFor="let niveau of niveaux" [value]="niveau">{{ niveau }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Semestre -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Semestre</mat-label>
+        <mat-select [(ngModel)]="selectedSemester" (selectionChange)="onSemesterOrYearChange()">
+          <mat-option *ngFor="let sem of semesters" [value]="sem">{{ sem }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <!-- Module -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Module</mat-label>
+        <mat-select [(ngModel)]="selectedModuleId">
+          <mat-option *ngFor="let module of modules" [value]="module.id">{{ module.nom }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Type de session -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Type de session</mat-label>
+        <mat-select [(ngModel)]="selectedSessionType" (selectionChange)="onSessionTypeChange()">
+          <mat-option *ngFor="let session of sessionTypes" [value]="session">{{ session }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Bouton Filtrer -->
+      <div class="flex items-end">
+        <button mat-raised-button color="primary" (click)="filterStudents()" class="h-[56px]">
+          <mat-icon>search</mat-icon>
+          Filtrer les étudiants
+        </button>
+      </div>
+    </div>
+  </mat-card>
+
+  <div class="overflow-x-auto mt-6" *ngIf="etudiants.length > 0">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Notes des étudiants</mat-card-title>
+        <mat-card-subtitle *ngIf="selectedModuleId">
+          Module sélectionné: {{ getSelectedModuleName() }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <table mat-table [dataSource]="etudiants" class="w-full">
+        <!-- Colonne Nom -->
+        <ng-container matColumnDef="nom">
+          <th mat-header-cell *matHeaderCellDef>Nom</th>
+          <td mat-cell *matCellDef="let etudiant">{{etudiant.lastName}}</td>
+        </ng-container>
+
+        <!-- Colonne Prénom -->
+        <ng-container matColumnDef="prenom">
+          <th mat-header-cell *matHeaderCellDef>Prénom</th>
+          <td mat-cell *matCellDef="let etudiant">{{etudiant.firstName}}</td>
+        </ng-container>
+
+        <!-- Colonne CNE -->
+        <ng-container matColumnDef="cne">
+          <th mat-header-cell *matHeaderCellDef>CNE</th>
+          <td mat-cell *matCellDef="let etudiant">{{etudiant.cne}}</td>
+        </ng-container>
+
+        <!-- Colonne CC1 (seulement pour session normale) -->
+        <ng-container matColumnDef="cc1">
+          <th mat-header-cell *matHeaderCellDef class="font-medium bg-indigo-50">CC1</th>
+          <td mat-cell *matCellDef="let e">
+            <mat-form-field appearance="outline" class="w-24">
+              <input matInput type="number" min="0" max="20" step="0.5"
+                     [(ngModel)]="notesMap[e.id].cc1" (change)="validateNote(e.id, 'cc1')">
+              <span matSuffix>/20</span>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- Colonne CC2 (seulement pour session normale) -->
+        <ng-container matColumnDef="cc2">
+          <th mat-header-cell *matHeaderCellDef class="font-medium bg-indigo-50">CC2</th>
+          <td mat-cell *matCellDef="let e">
+            <mat-form-field appearance="outline" class="w-24">
+              <input matInput type="number" min="0" max="20" step="0.5"
+                     [(ngModel)]="notesMap[e.id].cc2" (change)="validateNote(e.id, 'cc2')">
+              <span matSuffix>/20</span>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- Colonne CC (seulement pour session rattrapage) -->
+        <!-- Remplacer la section du tableau pour le rattrapage -->
+        <ng-container matColumnDef="nr" *ngIf="selectedSessionType === 'RATTRAPAGE'">
+          <th mat-header-cell *matHeaderCellDef>Note de Rat</th>
+          <td mat-cell *matCellDef="let etudiant">
+            <mat-form-field appearance="outline">
+              <input matInput type="number" min="0" max="20" step="0.5"
+                     [(ngModel)]="notesMap[etudiant.id].nr"
+                     (change)="validateNote(etudiant.id, 'nr')">
+              <span matSuffix>/20</span>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <!-- Colonne Moyenne -->
+        <ng-container matColumnDef="moyenne">
+          <th mat-header-cell *matHeaderCellDef>Moyenne</th>
+          <td mat-cell *matCellDef="let etudiant">
+            <span class="font-medium">
+              {{notesMap[etudiant.id].moyenne | number:'1.2-2'}}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Colonne Observation -->
+        <ng-container matColumnDef="observation">
+          <th mat-header-cell *matHeaderCellDef>Observation</th>
+          <td mat-cell *matCellDef="let etudiant">
+            <span [class]="getObservationClass(notesMap[etudiant.id].observation)">
+              {{notesMap[etudiant.id].observation}}
+            </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <mat-card-actions class="flex justify-end p-4">
+        <button mat-raised-button color="primary" (click)="saveNotes()">
+          <mat-icon>save</mat-icon>
+          Enregistrer les notes
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

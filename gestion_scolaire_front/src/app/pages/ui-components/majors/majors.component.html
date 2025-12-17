@@ -1,0 +1,64 @@
+<div class="major-container">
+
+  <!-- Header -->
+  <div class="p-6 mb-10 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div>
+      <h2 class="text-3xl font-bold text-white flex items-center gap-2">
+        <mat-icon class="text-white">school</mat-icon>
+        Liste des Filières
+      </h2>
+      <p class="text-indigo-100 mt-1 text-sm md:text-base">
+        Découvrez toutes les filières disponibles dans notre établissement.
+      </p>
+    </div>
+  </div>
+
+  <!-- Message vide -->
+  <div *ngIf="items.length === 0" class="empty-message text-center py-6 bg-yellow-50 border border-yellow-200 rounded-lg shadow-sm">
+    <mat-icon color="warn" class="mb-2">info</mat-icon>
+    <p class="text-gray-700 font-medium">Aucune filière trouvée.</p>
+  </div>
+
+  <!-- Grille -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <mat-card *ngFor="let major of items" class="major-card mat-elevation-z4 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300">
+
+      <!-- Header -->
+      <mat-card-header class="bg-indigo-50">
+        <div mat-card-avatar class="major-icon flex items-center justify-center bg-indigo-100 rounded-full w-12 h-12">
+          <mat-icon color="primary">book</mat-icon>
+        </div>
+        <mat-card-title class="text-lg font-semibold text-indigo-700">
+          {{ major.name }}
+        </mat-card-title>
+        <mat-card-subtitle class="flex items-center gap-1 text-gray-500">
+          <mat-icon class="text-sm" color="accent">event</mat-icon>
+          Créée le {{ major.dateCreation | date: 'dd/MM/yyyy' }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <!-- Contenu -->
+      <mat-card-content class="p-4">
+        <p class="flex items-start gap-2 text-gray-700">
+          <mat-icon class="text-indigo-400">description</mat-icon>
+          {{ major.contenu || 'Aucune description fournie.' }}
+        </p>
+
+        <p class="flex items-center gap-2 mt-3 text-gray-700">
+          <mat-icon class="text-indigo-400">person</mat-icon>
+          <strong>Chef de filière :</strong>
+          {{ major.chef?.firstName }} {{ major.chef?.lastName }}
+        </p>
+      </mat-card-content>
+
+      <!-- Actions -->
+      <mat-card-actions align="end" class="p-4 pt-0">
+        <button mat-flat-button color="primary" class="w-full" *ngIf="major.pdfPath"
+                (click)="major.id && downloadPdf(major.id)">
+          <mat-icon>picture_as_pdf</mat-icon>
+          Télécharger le dépliant
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+package org.sid.school_managementback.DTO;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class DepartementDTO extends BaseDto{
+    private String departementName;
+    private Long chefId;
+    private String imageUrl;
+}

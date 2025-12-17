@@ -1,0 +1,61 @@
+<!-- Titre principal avec icône -->
+
+<div class="p-6 mb-10 rounded-xl bg-indigo-50 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+  <div>
+    <h2 class="text-3xl font-bold text-indigo-700 flex items-center gap-2">
+      <mat-icon class="text-indigo-600">apartment</mat-icon>
+      Liste des Départements
+    </h2>
+    <p class="text-gray-600 mt-1 text-sm md:text-base">Restez informé(e) des dernières nouvelles et activités de l’école.</p>
+  </div>
+</div>
+
+<!-- Grille de départements -->
+<div class="departement-list"
+    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; justify-content: center;">
+    <mat-card *ngFor="let item of items" class="departement-card mat-elevation-z4"
+        style="width: 100%; max-width: 300px;">
+
+        <!-- Image -->
+        <img mat-card-image [src]="backendUrl + item.imageUrl" alt="Image département"
+            style="height: 180px; object-fit: cover; border-radius: 5px 5px 0 0;" />
+
+        <!-- Nom du département -->
+        <mat-card-title style="color: #1976d2;">
+            <a [routerLink]="['/ui-components/departements', item.id]" class="departement-title-link">
+            <mat-icon color="primary" style="vertical-align: middle;">business</mat-icon>
+            {{ item.departementName }} </a>
+        </mat-card-title>
+
+        <!-- Chef de département -->
+        <mat-card-subtitle *ngIf="item.chef">
+            <mat-icon color="accent" style="vertical-align: middle;">badge</mat-icon>
+            <span style="color: #1976d2;">Chef de département :</span>
+            {{ item.chef.firstName }} {{ item.chef.lastName }}
+        </mat-card-subtitle>
+
+        <!-- Aucun chef -->
+        <mat-card-content *ngIf="!item.chef">
+            <mat-icon color="warn" style="vertical-align: middle;">person_off</mat-icon>
+            Aucun chef attribué
+        </mat-card-content>
+
+        <!-- Actions -->
+        <mat-card-actions align="end"  *ngIf="authService.getUserRole() === 'ADMINISTRATOR'">
+            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Options">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="editItem(item.id!)">
+                    <mat-icon>edit</mat-icon>
+                    <span>Modifier</span>
+                </button>
+                <button mat-menu-item (click)="deleteItem(item.id!)">
+                    <mat-icon color="warn">delete</mat-icon>
+                    <span class="text-warn">Supprimer</span>
+                </button>
+            </mat-menu>
+        </mat-card-actions>
+
+    </mat-card>
+</div>

@@ -1,0 +1,118 @@
+<div class="w-full p-6 mb-10 rounded-xl bg-indigo-50 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+  <div>
+    <h2 class="text-3xl font-bold text-indigo-700 flex items-center gap-2">
+      <mat-icon class="text-indigo-600">event_busy</mat-icon>
+      Gestion des Absences
+    </h2>
+    <p class="text-gray-600 mt-1 text-sm md:text-base">
+      Filtrez et visualisez les absences par filière et semestre
+    </p>
+  </div>
+
+</div>
+
+<!-- Filtres -->
+<div class="bg-white p-4 rounded-lg shadow mb-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- Filtre par filière -->
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Filière</mat-label>
+      <mat-select [(value)]="selectedMajor" (selectionChange)="applyFilters()">
+        <mat-option *ngFor="let major of getUniqueMajors()" [value]="major.id">
+          {{ major.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Filtre par semestre -->
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Semestre</mat-label>
+      <mat-select [(value)]="selectedSemester" (selectionChange)="applyFilters()">
+        <mat-option *ngFor="let semester of getUniqueSemesters()" [value]="semester">
+          {{ semester }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Bouton reset -->
+    <button mat-stroked-button color="warn" (click)="resetFilters()" class="h-[56px]">
+      <mat-icon>refresh</mat-icon>
+      Réinitialiser
+    </button>
+  </div>
+</div>
+
+<!-- Tableau des absences -->
+<div class="overflow-x-auto bg-white rounded-lg shadow">
+  <table mat-table [dataSource]="filteredAbsences" class="w-full">
+    <!-- Colonnes... (conservez vos colonnes existantes) -->
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef> Date </th>
+      <td mat-cell *matCellDef="let absence">
+        <div class="flex items-center gap-2">
+          <mat-icon class="text-gray-400">calendar_today</mat-icon>
+          {{ absence.date | date:'mediumDate' }}
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="timeSlot">
+      <th mat-header-cell *matHeaderCellDef> Heure </th>
+      <td mat-cell *matCellDef="let absence">
+        <div class="flex items-center gap-2">
+          <mat-icon class="text-gray-400">schedule</mat-icon>
+          {{ absence.timeSlot }}
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="justification">
+      <th mat-header-cell *matHeaderCellDef> Statut </th>
+      <td mat-cell *matCellDef="let absence">
+        <span [class]="absence.justification ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+              class="px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 w-fit">
+          <mat-icon class="text-sm">{{ absence.justification ? 'check_circle' : 'cancel' }}</mat-icon>
+          {{ absence.justification }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="module">
+      <th mat-header-cell *matHeaderCellDef> Module </th>
+      <td mat-cell *matCellDef="let absence">
+        <div class="font-medium">{{ getModuleName(absence.moduleId) }}</div>
+        <div class="text-xs text-gray-500">{{ getMajorName(absence.moduleId) }} • {{ getSemester(absence.moduleId) }}</div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="student">
+      <th mat-header-cell *matHeaderCellDef> Étudiant </th>
+      <td mat-cell *matCellDef="let absence">
+        <div class="font-medium">{{ getStudentName(absence.etudiantId) }}</div>
+        <div class="text-xs text-gray-500">{{ getStudentCNE(absence.etudiantId) }}</div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef class="w-24"> Actions </th>
+      <td mat-cell *matCellDef="let absence" >
+        <button mat-icon-button color="primary" (click)="editAbsence(absence)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteAbsence(absence)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <!-- État vide -->
+  <div *ngIf="filteredAbsences.length === 0" class="p-8 text-center text-gray-500">
+    <mat-icon class="text-4xl mb-2">search_off</mat-icon>
+    <h3 class="text-lg font-medium">Aucune absence trouvée</h3>
+    <p>Essayez de modifier vos critères de recherche</p>
+  </div>
+</div>

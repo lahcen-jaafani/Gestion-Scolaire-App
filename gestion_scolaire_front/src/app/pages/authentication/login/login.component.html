@@ -1,0 +1,53 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 p-4">
+  <mat-card class="w-full max-w-md p-8 shadow-2xl rounded-2xl bg-white animate-fade-in">
+
+    <!-- Header -->
+    <mat-card-header class="flex flex-col items-center text-center mb-4">
+      <div class="bg-indigo-100 p-3 rounded-full mb-3">
+        <mat-icon class="text-indigo-600 text-3xl">lock</mat-icon>
+      </div>
+      <h2 class="text-2xl font-extrabold text-gray-800">Connexion</h2>
+      <p class="text-gray-500 text-sm mt-1">Accédez à votre espace</p>
+    </mat-card-header>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-5 mt-4">
+
+      <!-- Email -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" />
+        <mat-icon matSuffix class="text-gray-400">email</mat-icon>
+        <mat-error *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+          Email invalide
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Password -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Mot de passe</mat-label>
+        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" />
+        <button mat-icon-button matSuffix (click)="hide = !hide" type="button">
+          <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('password')?.invalid && form.get('password')?.touched">
+          Mot de passe requis
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Forgot password -->
+      <div class="text-right">
+        <a routerLink="/ui-components/forget-password"
+           class="text-sm text-indigo-600 hover:text-indigo-800 transition">
+          Mot de passe oublié ?
+        </a>
+      </div>
+
+      <!-- Submit -->
+      <button mat-flat-button color="primary" class="w-full py-2 rounded-lg text-white font-semibold shadow-md hover:shadow-lg transition" type="submit">
+        <mat-icon>login</mat-icon>
+        Se connecter
+      </button>
+    </form>
+  </mat-card>
+</div>
