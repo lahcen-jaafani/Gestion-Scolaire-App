@@ -56,12 +56,7 @@ export const navItems: NavItem[] = [
     iconName: 'book',
     route: '/ui-components/modules',
   },
-  {
-    displayName: 'Étudiants',
-    iconName: 'users',
-    route: '/ui-components/etudiants',
-    roles: ['ADMINISTRATOR']
-  },
+
   {
     displayName: 'Marquer Absences',
     iconName: 'user-off',

@@ -20,7 +20,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class NoteDto extends BaseDto {
+public class NoteDto  {
 
     private Long id;
     private Long etudiantId;

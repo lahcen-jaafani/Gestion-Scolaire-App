@@ -91,22 +91,25 @@ private final StudentRepository studentRepository;
     @Transactional
     @Override
     public List<Note> saveMultipleNotes(List<NoteDto> noteDTOs, Long professeurId) {
-        if (noteDTOs.isEmpty()) {
+
+        if (noteDTOs == null || noteDTOs.isEmpty()) {
             throw new RuntimeException("Aucune note à enregistrer");
         }
 
-        // Verify professor exists
+        System.out.println("🔍 Professeur ID reçu: " + professeurId);
+
         Professor professeur = professeurRepository.findById(professeurId)
                 .orElseThrow(() -> new RuntimeException("Professeur non trouvé"));
 
-        // Get module ID and session type from first note (all notes should be for same module and session)
         Long moduleId = noteDTOs.get(0).getModuleId();
         SessionType sessionType = noteDTOs.get(0).getSessionType();
+
+        System.out.println("🔍 Module ID: " + moduleId);
+        System.out.println("🔍 SessionType: " + sessionType);
 
         Module module = moduleRepository.findById(moduleId)
                 .orElseThrow(() -> new RuntimeException("Module non trouvé"));
 
-        // Check if notes already exist for this module and session
         if (noteRepository.existsByModuleIdAndSessionType(moduleId, sessionType)) {
             throw new RuntimeException("Les notes pour ce module et cette session existent déjà.");
         }
@@ -114,14 +117,26 @@ private final StudentRepository studentRepository;
         List<Note> notes = new ArrayList<>();
 
         for (NoteDto dto : noteDTOs) {
-            // Verify student exists
-            Student etudiant = etudiantRepository.findById(dto.getId())
-                    .orElseThrow(() -> new RuntimeException("Étudiant non trouvé avec ID: " + dto.getId()));
 
-            // Check if note already exists for this student, module and session
+            // 🧪 LOG COMPLET DU DTO
+            System.out.println("📦 DTO reçu: " + dto);
+
+            // ✅ UTILISER etudiantId (PAS dto.getId())
+            if (dto.getEtudiantId() == null) {
+                throw new RuntimeException("etudiantId est NULL dans le DTO");
+            }
+
+            Student etudiant = etudiantRepository.findById(dto.getEtudiantId())
+                    .orElseThrow(() ->
+                            new RuntimeException("Étudiant non trouvé avec ID: " + dto.getEtudiantId())
+                    );
+
+            // Vérifier duplication
             if (noteRepository.existsByEtudiantIdAndModuleIdAndSessionType(
-                    dto.getId(), moduleId, sessionType)) {
-                throw new RuntimeException("Note existe déjà pour l'étudiant: " + etudiant.getLastName());
+                    dto.getEtudiantId(), moduleId, sessionType)) {
+                throw new RuntimeException(
+                        "Note existe déjà pour l'étudiant: " + etudiant.getLastName()
+                );
             }
 
             Note note = new Note();
@@ -133,17 +148,16 @@ private final StudentRepository studentRepository;
 
             if (sessionType == SessionType.NORMAL) {
                 handleNormalSession(dto, note);
-            } else { // RATTRAPAGE
+            } else {
                 handleRetakeSession(dto, note);
             }
-
-            // Set "Notes incomplètes" only if no valid grades were provided
 
             notes.add(note);
         }
 
         return noteRepository.saveAll(notes);
     }
+
 
     private void handleNormalSession(NoteDto dto, Note note) {
         note.setCc1(dto.getCc1());

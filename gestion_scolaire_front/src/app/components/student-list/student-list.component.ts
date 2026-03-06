@@ -24,15 +24,6 @@ import { MatMenuModule } from '@angular/material/menu';
   styleUrl: './student-list.component.scss'
 })
 export class StudentListComponent {
- displayedColumns: string[] = ['id', 'firstName', 'lastName', 'email', 'phoneNumber', 'role'];
-  dataSource: User[] = [];
 
-  constructor(private userService: UserService) {}
 
-  ngOnInit(): void {
-    this.userService.getAll().subscribe({
-      next: (users) => this.dataSource = users,
-      error: (err) => console.error('Error fetching users', err)
-    });
-  }
 }

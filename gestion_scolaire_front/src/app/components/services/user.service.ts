@@ -10,7 +10,7 @@ export class UserService extends GenericService<User, number> {
     private backendUrl = 'http://localhost:8080/api';
 private apiUrl='http://localhost:8080/api/statistics'
     constructor(http: HttpClient) {
-      super(http, 'http://localhost:8080/api');
+      super(http, 'http://localhost:8080/api/student');
     }
   getUserStatistics(): Observable<any> {
     return this.http.get(`${this.apiUrl}/users`);
